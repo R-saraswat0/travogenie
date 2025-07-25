@@ -1,0 +1,90 @@
+
+/* Navbar Button Oval Only On Hover/Active */
+.btn.nav-oval {
+  background: none;
+  color: #2a4365;
+  font-size: 1.18rem;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  margin: 0;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  min-width: 0;
+  text-align: center;
+  width: auto;
+  display: inline-block;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.12);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0.5rem 1.5rem;
+  gap: 2.5rem;
+}
+ .btn.nav-oval:hover,
+ .btn.nav-oval.active-oval {
+  border-radius: 28px;
+  background: linear-gradient(135deg, #1E90FF 0%, #2ECC71 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px #1E90FF33;
+  padding: 0.55rem 1.7rem;
+  text-decoration: none;
+  transform: none;
+  transition: background 0.18s, color 0.18s, border-radius 0.18s, padding 0.18s;
+}
+.btn.nav-oval:active {
+  transform: translateY(0);
+}
+/* Navbar.css */
+
+.navbar {
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  max-width: 100vw;
+  padding: 1.5rem 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  z-index: 10;
+  overflow-x: hidden;
+}
+
+.logo {
+  color: black;
+  font-weight: bold;
+  font-size: 30px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.logo:hover {
+  color: white;
+  text-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white;
+  cursor: pointer;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2.2rem; /* Increased gap for better separation */
+  margin-right: 6vw;
+}
+.nav-links a {
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: black;
+  display: inline-block;
+  padding: 0.18rem 0.7rem;
+  border-radius: 6px;
+  transition: color 0.3s, background 0.3s, border-radius 0.3s, padding 0.3s;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Bounce Effect Animation */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+

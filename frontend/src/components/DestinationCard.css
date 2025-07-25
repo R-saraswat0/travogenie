@@ -1,0 +1,20 @@
+.destination-card {
+  /* Reduce vibrancy/saturation of background image */
+  background: linear-gradient(135deg, rgba(30,53,94,0.98) 0%, rgba(42,67,101,0.95) 100%), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80') center center/cover no-repeat;
+  background-blend-mode: overlay, luminosity;
+  filter: saturate(0.7) brightness(0.95);
+}
+
+.destination-card .destination-title, .destination-card .destination-desc, .destination-card, .destination-card .destination-price, .destination-card .destination-duration, .destination-card .destination-rating {
+  /* Brighter, higher-contrast text */
+  color: #fafdff !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.18);
+}
+
+.destination-card .destination-title {
+  color: #fff !important;
+}
+
+.destination-card .destination-desc {
+  color: #e3eafc !important;
+}

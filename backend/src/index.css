@@ -1,0 +1,368 @@
+.testimonial-filter-btn {
+  padding: 10px 28px;
+  border: none;
+  border-radius: 26px;
+  background: linear-gradient(90deg, #e3eafc 0%, #f8fafc 100%);
+  color: #2a4365;
+  font-weight: 700;
+  font-size: 1.08rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 16px rgba(44,62,80,0.10);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(.25,.8,.25,1);
+  outline: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.testimonial-filter-btn.active {
+  background: linear-gradient(135deg, #1E90FF, #2ECC71);
+  color: white;
+  box-shadow: 0 6px 20px #2a436540;
+}
+.testimonial-filter-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1E90FF, #2ECC71);
+  color: white;
+  box-shadow: 0 8px 24px #1E90FF40;
+  transform: scale(1.08);
+}
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+/* css for destination */
+.destination-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(245,245,245,0.92) 100%), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80') center center/cover no-repeat;
+  background-blend-mode: lighten, overlay;
+  color: #1a2233;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease;
+}
+
+.destination-card:hover {
+  transform: translateY(-5px);
+}
+
+.destination-info {
+  padding: 1rem;
+}
+
+.destination-price {
+  color: #2a4365;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+/* css for testimonial */
+.testimonial-card {
+  background: linear-gradient(135deg, rgba(30,53,94,0.98) 0%, rgba(42,67,101,0.95) 100%), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80') center center/cover no-repeat;
+  background-blend-mode: overlay;
+  color: #fff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(30, 144, 255, 0.10), 0 2px 8px rgba(44,62,80,0.10);
+  transition: transform 0.35s cubic-bezier(.25,.8,.25,1), box-shadow 0.35s cubic-bezier(.25,.8,.25,1);
+  animation: fadeInCard 0.7s cubic-bezier(.25,.8,.25,1);
+}
+
+.testimonial-card:hover {
+  transform: translateY(-8px) scale(1.04) rotate(-1deg);
+  box-shadow: 0 16px 48px rgba(30, 144, 255, 0.18), 0 4px 16px rgba(44,62,80,0.12);
+}
+
+@keyframes fadeInCard {
+  0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.user-details h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.rating {
+  color: #FFD700;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.testimonial-text {
+  font-size: 0.95rem;
+  color: #444;
+}
+/* animation for butons and effectss. */
+.cta-button:hover {
+  transform: scale(1.05);
+  background-color: #1e355e;
+}
+
+.section-title h2 {
+  animation: fadeInUp 1s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.landing-page {
+  background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');
+  background-size:cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+}
+
+.overlay {
+  background: rgba(148, 143, 143, 0.55);
+  padding: 3rem 2rem;
+  border-radius: 16px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 1s ease-out;
+}
+
+.overlay h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.overlay p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #eee;
+}
+
+.cta-button {
+  background-color: #ffffff;
+  color: #1e1e1e;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 999px !important;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.4s ease;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+.cta-button:hover {
+  background-color: #fff;
+  color: transparent;
+  background-image: linear-gradient(135deg, #1E90FF, #2ECC71);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  box-shadow: 0 0 20px #ffffffb0;
+  transform: scale(1.05);
+  border-radius: 999px !important;
+}
+
+/* Optional Entrance Animation */
+@keyframes fadeInUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.destination-card {
+  background: linear-gradient(135deg, rgba(30,53,94,0.92) 0%, rgba(42,67,101,0.88) 100%), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80') center center/cover no-repeat;
+  background-blend-mode: overlay;
+  color: #f8fafc;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18);
+  transition: transform 2s ease, box-shadow 0.5s ease;
+}
+
+.destination-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 40px 70px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+}
+
+.destination-image-container {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.destination-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.destination-duration {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.destination-content {
+  padding: 20px;
+}
+
+.destination-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #FFD700;
+  margin-bottom: 10px;
+}
+
+.destination-title {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: #2a4365;
+}
+
+.destination-desc {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.destination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.destination-price {
+  display: flex;
+  flex-direction: column;
+}
+
+.destination-btn {
+  padding: 8px 20px;
+  background: #2a4365;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.destination-btn:hover {
+  background: #1e355e;
+}
+
+
+.destination-card {
+  /* ...existing styles... */
+  opacity: 0;
+  animation-duration: 0.7s;
+  animation-fill-mode: forwards;
+}
+
+.destination-card.left {
+  animation-name: slideInLeft;
+}
+
+.destination-card.right {
+  animation-name: slideInRight;
+}
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.destination-heading-animate {
+  animation: slideDown 0.7s cubic-bezier(.25,.8,.25,1);
+}
+
+.destination-subtitle-animate {
+  animation: slideDown 0.7s cubic-bezier(.25,.8,.25,1);
+}
+
+.testimonial-card.left-animate {
+  animation: slideInLeft 0.7s cubic-bezier(.25,.8,.25,1);
+}
+.testimonial-card.right-animate {
+  animation: slideInRight 0.7s cubic-bezier(.25,.8,.25,1);
+}
+
+.global-bg {
+  background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') center center/cover no-repeat fixed;
+  background-color: #1a2233;
+}
+
+
+/* --- begin ChatGPT minimal patch to tighten gaps in image section --- */
+.image-section, .gallery, .images-grid, .image-grid, .image-wrapper {
+  gap: 4px !important;
+}
+.image-section img, .gallery img, .images-grid img, .image-grid img, .image-wrapper img {
+  margin: 2px !important;
+}
+/* --- end ChatGPT minimal patch --- */
+

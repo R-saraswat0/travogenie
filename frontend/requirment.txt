@@ -1,0 +1,16 @@
+# Project Requirements
+
+## Frontend
+- React (JSX files implemented with Node.js)
+
+## Backend
+- MongoDB Compass for data management
+- Express.js for server
+- Nodemon for hot-reloading
+- dotenv for environment variables
+- Postman for API testing
+
+## Useful Commands
+npm install express nodemon dotenv mongoose
+npm install
+npm start
