@@ -1,8 +1,20 @@
 import axios from './axiosInstance';
 
+const validateCityId = (cityId) => {
+  if (!cityId || typeof cityId !== 'string' && typeof cityId !== 'number') {
+    throw new Error('Invalid city ID');
+  }
+  const sanitized = String(cityId).replace(/[^a-zA-Z0-9-_]/g, '');
+  if (sanitized.length === 0 || sanitized.length > 50) {
+    throw new Error('Invalid city ID format');
+  }
+  return sanitized;
+};
+
 export const fetchCityImages = async (cityId) => {
   try {
-    const response = await axios.get(`/api/cities/${cityId}/images`); // Adjust to match your API
+    const validatedId = validateCityId(cityId);
+    const response = await axios.get(`/api/cities/${validatedId}/images`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching images for city ${cityId}:`, error);

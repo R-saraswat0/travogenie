@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 // Load environment variables
 dotenv.config();
@@ -19,12 +21,22 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 // Initialize express app
 const app = express();
 
+// Security middleware
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
+
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
   credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // ✅ Root route for browser testing
 app.get('/', (req, res) => {
@@ -59,8 +71,8 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 .then(() => {
     console.log('✅ Connected to MongoDB');
-    app.listen(process.env.PORT || 5000, () => {
-        console.log(`🚀 Server running on port ${process.env.PORT || 5000}`);
+    app.listen(process.env.PORT || 5001, () => {
+        console.log(`🚀 Server running on port ${process.env.PORT || 5001}`);
     });
 })
 .catch((err) => {

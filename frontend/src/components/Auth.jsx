@@ -1,24 +1,22 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Auth.css';
 
 
 function Auth() {
   const navigate = useNavigate();
+  const { register, login, loading, error, clearError } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [signupData, setSignupData] = useState({ name: '', email: '', password: '', confirmPassword: '', terms: false });
-  const [loginError, setLoginError] = useState('');
-  const [signupError, setSignupError] = useState('');
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState({ login: false, signup: false, confirm: false });
 
   const handleToggle = (login) => {
     setIsLogin(login);
-    setLoginError('');
-    setSignupError('');
+    clearError();
     setSuccess('');
   };
 
@@ -31,52 +29,62 @@ function Auth() {
     setSignupData({ ...signupData, [id]: type === 'checkbox' ? checked : value });
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setLoginError('');
-    setSuccess('');
-    if (!loginData.email || !loginData.password) {
-      setLoginError('Please fill in all fields');
-      return;
-    }
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess('Login successful! Redirecting...');
-      localStorage.setItem('isLoggedIn', 'true');
-      setTimeout(() => {
-        setSuccess('');
-        navigate('/');
-      }, 2000);
-    }, 1500);
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
-  const handleSignup = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setSignupError('');
+    clearError();
     setSuccess('');
+    
+    if (!loginData.email || !loginData.password) {
+      return;
+    }
+    if (!validateEmail(loginData.email)) {
+      return;
+    }
+    
+    const result = await login(loginData);
+    
+    if (result.success) {
+      setSuccess('Login successful! Redirecting...');
+      setTimeout(() => navigate('/'), 1500);
+    }
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    clearError();
+    setSuccess('');
+    
     if (!signupData.name || !signupData.email || !signupData.password || !signupData.confirmPassword) {
-      setSignupError('Please fill in all fields');
+      return;
+    }
+    if (!validateEmail(signupData.email)) {
+      return;
+    }
+    if (signupData.password.length < 6) {
       return;
     }
     if (signupData.password !== signupData.confirmPassword) {
-      setSignupError('Passwords do not match');
       return;
     }
     if (!signupData.terms) {
-      setSignupError('Please agree to the Terms & Conditions');
       return;
     }
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess('Account created successfully! Redirecting...');
-      localStorage.setItem('isLoggedIn', 'true');
-      setTimeout(() => {
-        setSuccess('');
-        navigate('/');
-      }, 2000);
-    }, 1500);
+    
+    const result = await register({
+      name: signupData.name,
+      email: signupData.email,
+      password: signupData.password
+    });
+    
+    if (result.success) {
+      setSuccess('Account created! Check your email for verification.');
+      setTimeout(() => navigate('/'), 3000);
+    }
   };
 
   return (
@@ -86,33 +94,33 @@ function Auth() {
           <div className={isLogin ? 'active' : ''} onClick={() => handleToggle(true)}>Login</div>
           <div className={!isLogin ? 'active' : ''} onClick={() => handleToggle(false)}>Sign Up</div>
         </div>
-        <h3>Welcome to Our Platform</h3>
-        <p>Access your account with just a few clicks</p>
+        <h3 style={{ marginBottom: '10px', fontSize: '28px', fontWeight: '700' }}>TravoGenie</h3>
+        <p style={{ fontSize: '16px', opacity: 0.9 }}>Your AI-powered travel companion</p>
       </div>
       <div className="form-container">
         {isLogin ? (
           <form className="login-form" onSubmit={handleLogin} autoComplete="off">
-            <h2>Login to Your Account</h2>
+            <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#1f2937', fontSize: '24px', fontWeight: '700' }}>Welcome Back</h2>
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input type="email" id="email" value={loginData.email} onChange={handleLoginChange} placeholder="Enter your email" />
               <i className="fas fa-envelope"></i>
             </div>
-            <div className="form-group">
+            <div className="form-group password-field">
               <label htmlFor="password">Password</label>
               <input type={showPassword.login ? 'text' : 'password'} id="password" value={loginData.password} onChange={handleLoginChange} placeholder="Enter your password" />
               <i className="fas fa-lock"></i>
               <span className="password-toggle" onClick={() => setShowPassword({ ...showPassword, login: !showPassword.login })}>
                 <i className={showPassword.login ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
               </span>
-              {loginError && <div className="form-error">{loginError}</div>}
+              {error && isLogin && <div className="form-error">{error}</div>}
             </div>
-            <div className="form-group" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <label htmlFor="remember-me" style={{ fontSize: 12, color: 'var(--light-text)', margin: 0 }}>Remember me</label>
-                <input type="checkbox" id="remember-me" style={{ margin: 0 }} />
+            <div className="form-group" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <input type="checkbox" id="remember-me" style={{ margin: 0, accentColor: '#1E90FF', width: '16px', height: '16px' }} />
+                <label htmlFor="remember-me" style={{ fontSize: 14, color: '#6b7280', margin: 0, cursor: 'pointer' }}>Remember me</label>
               </div>
-              <a href="#" style={{ color: 'var(--primary-color)', fontSize: 12, textDecoration: 'none' }}>Forgot Password?</a>
+              <a href="#" style={{ color: '#1E90FF', fontSize: 14, textDecoration: 'none', fontWeight: '500' }}>Forgot Password?</a>
             </div>
             <button type="submit" className="btn" disabled={loading}>Login</button>
             <div className="social-login">
@@ -128,7 +136,7 @@ function Auth() {
           </form>
         ) : (
           <form className="signup-form" onSubmit={handleSignup} autoComplete="off">
-            <h2>Create an Account</h2>
+            <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#1f2937', fontSize: '24px', fontWeight: '700' }}>Create Account</h2>
             <div className="form-group">
               <label htmlFor="name">Full Name</label>
               <input type="text" id="name" value={signupData.name} onChange={handleSignupChange} placeholder="Enter your full name" />
@@ -139,7 +147,7 @@ function Auth() {
               <input type="email" id="email" value={signupData.email} onChange={handleSignupChange} placeholder="Enter your email" />
               <i className="fas fa-envelope"></i>
             </div>
-            <div className="form-group">
+            <div className="form-group password-field">
               <label htmlFor="password">Password</label>
               <input type={showPassword.signup ? 'text' : 'password'} id="password" value={signupData.password} onChange={handleSignupChange} placeholder="Create a password" />
               <i className="fas fa-lock"></i>
@@ -147,18 +155,18 @@ function Auth() {
                 <i className={showPassword.signup ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
               </span>
             </div>
-            <div className="form-group">
+            <div className="form-group password-field">
               <label htmlFor="confirmPassword">Confirm Password</label>
               <input type={showPassword.confirm ? 'text' : 'password'} id="confirmPassword" value={signupData.confirmPassword} onChange={handleSignupChange} placeholder="Confirm your password" />
               <i className="fas fa-lock"></i>
               <span className="password-toggle" onClick={() => setShowPassword({ ...showPassword, confirm: !showPassword.confirm })}>
                 <i className={showPassword.confirm ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
               </span>
-              {signupError && <div className="form-error">{signupError}</div>}
+              {error && !isLogin && <div className="form-error">{error}</div>}
             </div>
-            <div className="form-group">
-              <input type="checkbox" id="terms" checked={signupData.terms} onChange={handleSignupChange} style={{ marginRight: 5 }} />
-              <label htmlFor="terms" style={{ fontSize: 12, color: 'var(--light-text)' }}>I agree to the <a href="#" style={{ color: 'var(--primary-color)' }}>Terms & Conditions</a></label>
+            <div className="form-group" style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: '15px' }}>
+              <input type="checkbox" id="terms" checked={signupData.terms} onChange={handleSignupChange} style={{ margin: 0, marginTop: '2px', accentColor: '#1E90FF', width: '16px', height: '16px', flexShrink: 0 }} />
+              <label htmlFor="terms" style={{ fontSize: 14, color: '#6b7280', cursor: 'pointer', margin: 0, lineHeight: '1.5' }}>I agree to the <a href="#" style={{ color: '#1E90FF', textDecoration: 'underline' }}>Terms & Conditions</a></label>
             </div>
             <button type="submit" className="btn" disabled={loading}>Sign Up</button>
             <div className="social-login">

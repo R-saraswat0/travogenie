@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { FaStar } from 'react-icons/fa';
 import TestimonialCard from '../components/TestimonialCard';
+import '../components/TestimonialCard.css';
 
 const testimonialData = [
   { name: 'Ananya Mehta', location: 'Mumbai, India', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2', rating: 5, text: 'Travogenie made my family vacation magical! The Bali package was perfectly curated.' },
@@ -25,6 +26,9 @@ const testimonialData = [
   { name: 'Chen Wei', location: 'Shanghai, China', image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9', rating: 5, text: 'Great Wall hiking tour was challenging but rewarding. Excellent local guides.' },
   { name: 'Alejandro Ruiz', location: 'Buenos Aires, Argentina', image: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef', rating: 4, text: 'Rio Carnival experience was vibrant and well-organized. The samba school visit was a highlight.' },
   { name: 'Natalia Ivanova', location: 'Moscow, Russia', image: 'https://images.unsplash.com/photo-1542206395-9feb3edaa68d', rating: 5, text: 'Trans-Siberian railway package was the journey of a lifetime. Everything was perfect.' },
+  { name: 'Robert Johnson', location: 'Austin, USA', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d', rating: 3, text: 'Decent experience overall. The destinations were beautiful but some logistics could be improved.' },
+  { name: 'Sarah Williams', location: 'Melbourne, Australia', image: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e', rating: 3, text: 'Good trip with nice locations. Flight delays affected our schedule but staff handled it well.' },
+  { name: 'Marco Silva', location: 'São Paulo, Brazil', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7', rating: 3, text: 'Satisfactory service and fair pricing. Some activities exceeded expectations while others were basic.' },
 ];
 
 function Testimonial() {
@@ -52,6 +56,8 @@ function Testimonial() {
 	boxSizing: 'border-box',
 	overflowX: 'hidden',
 	padding: '2.5rem 2% 1.5rem',
+	paddingTop: '120px',
+	marginTop: '0',
 	background: '#fff',
   }}>
 	  <div style={{ textAlign: 'center', marginBottom: '2.2rem' }}>

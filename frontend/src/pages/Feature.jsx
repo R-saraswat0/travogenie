@@ -20,6 +20,7 @@ function Feature() {
       overflowX: 'hidden',
       padding: 0,
       paddingTop: '90px', // Add space for navbar
+      paddingBottom: '100px', // Add space before footer
       background: '#fff',
     }}>
       <div className="feature-heading">

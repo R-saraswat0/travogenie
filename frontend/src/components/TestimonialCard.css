@@ -18,3 +18,33 @@
 .testimonial-card .user-details p {
   color: #e3eafc !important;
 }
+
+/* Testimonial filter buttons */
+.testimonial-filter-btn {
+  padding: 8px 16px;
+  border: 2px solid #1E90FF;
+  background: transparent;
+  color: #1E90FF;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.testimonial-filter-btn:hover {
+  background: #1E90FF;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+}
+
+.testimonial-filter-btn.active {
+  background: linear-gradient(135deg, #1E90FF, #2ECC71);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+}

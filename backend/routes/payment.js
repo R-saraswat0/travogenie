@@ -1,8 +1,14 @@
 const router = require('express').Router();
-const { protect } = require('../middleware/authMiddleware');
-const controller = require('../controllers/paymentController');
+const { authenticate } = require('../middleware/auth');
+const {
+  createPaymentOrder,
+  verifyPayment,
+  generateInvoice
+} = require('../controllers/paymentController');
 
-router.post('/create-order', protect, controller.createOrder);
-router.post('/verify', protect, controller.verifyPayment);
+// Payment routes
+router.post('/create-order', authenticate, createPaymentOrder);
+router.post('/verify', authenticate, verifyPayment);
+router.get('/invoice/:bookingId', authenticate, generateInvoice);
 
 module.exports = router;
