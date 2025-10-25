@@ -93,7 +93,11 @@ const Bookings = () => {
     );
   }
 
-  if (loading) return <div className="loading">Loading bookings...</div>;
+  if (loading) return (
+    <div className="bookings-container">
+      <div className="loading">Loading bookings...</div>
+    </div>
+  );
 
   return (
     <div className="bookings-container">

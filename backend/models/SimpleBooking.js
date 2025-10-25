@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const bookingSchema = new mongoose.Schema({
+const simpleBookingSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -11,18 +11,16 @@ const bookingSchema = new mongoose.Schema({
     ref: 'Package',
     required: true
   },
+  dates: {
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true }
+  },
   travelers: {
     adults: { type: Number, default: 1 },
     children: { type: Number, default: 0 },
     infants: { type: Number, default: 0 }
   },
-  dates: {
-    startDate: { type: Date, required: true },
-    endDate: { type: Date, required: true }
-  },
   pricing: {
-    baseAmount: { type: Number, default: 0 },
-    taxes: { type: Number, default: 0 },
     totalAmount: { type: Number, default: 0 }
   },
   status: {
@@ -34,6 +32,4 @@ const bookingSchema = new mongoose.Schema({
   timestamps: true
 });
 
-
-
-module.exports = mongoose.model('Booking', bookingSchema);
+module.exports = mongoose.model('SimpleBooking', simpleBookingSchema);

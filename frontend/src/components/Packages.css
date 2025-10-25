@@ -4,6 +4,18 @@
   padding: 2rem;
   margin-top: 90px;
   min-height: calc(100vh - 90px);
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .packages-container h1 {

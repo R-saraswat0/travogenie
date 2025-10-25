@@ -76,7 +76,7 @@ function Home() {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroImages.length]);
 
   return (
     <div className="home-container">
@@ -113,16 +113,16 @@ function Home() {
           </div>
           <div className="hero-stats">
             <div className="stat">
-              <span className="stat-number">50K+</span>
-              <span className="stat-label">Happy Travelers</span>
+              <span className="stat-number" style={{color: '#000'}}>50K+</span>
+              <span className="stat-label" style={{color: '#000'}}>Happy Travelers</span>
             </div>
             <div className="stat">
-              <span className="stat-number">100+</span>
-              <span className="stat-label">Destinations</span>
+              <span className="stat-number" style={{color: '#000'}}>100+</span>
+              <span className="stat-label" style={{color: '#000'}}>Destinations</span>
             </div>
             <div className="stat">
-              <span className="stat-number">4.9★</span>
-              <span className="stat-label">Rating</span>
+              <span className="stat-number" style={{color: '#000'}}>4.9★</span>
+              <span className="stat-label" style={{color: '#000'}}>Rating</span>
             </div>
           </div>
         </div>

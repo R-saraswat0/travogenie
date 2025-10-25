@@ -2,6 +2,16 @@
 .home-container {
   width: 100%;
   overflow-x: hidden;
+  animation: pageLoad 1s ease-out;
+}
+
+@keyframes pageLoad {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Hero Section */
@@ -57,6 +67,18 @@
   padding: 2rem;
   z-index: 1;
   margin-top: -70px;
+  animation: heroContentSlide 1.2s ease-out 0.3s both;
+}
+
+@keyframes heroContentSlide {
+  from {
+    opacity: 0;
+    transform: translateY(80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hero-badge {
@@ -69,6 +91,18 @@
   font-weight: 600;
   margin-bottom: 2rem;
   border: 1px solid rgba(255,255,255,0.3);
+  animation: badgeFloat 0.8s ease-out 0.6s both;
+}
+
+@keyframes badgeFloat {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .hero-title {
@@ -77,12 +111,41 @@
   margin-bottom: 1.5rem;
   line-height: 1.1;
   text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  animation: titleReveal 1s ease-out 0.8s both;
+}
+
+@keyframes titleReveal {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+    letter-spacing: 10px;
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    letter-spacing: normal;
+  }
 }
 
 .gradient-text {
   background: linear-gradient(45deg, #FFD700, #FFA500);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShine 2s ease-in-out infinite alternate;
+}
+
+@keyframes gradientShine {
+  from {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  to {
+    background: linear-gradient(45deg, #FFA500, #FFD700);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
 }
 
 .hero-subtitle {
@@ -91,6 +154,18 @@
   opacity: 0.95;
   line-height: 1.6;
   font-weight: 400;
+  animation: subtitleFade 0.8s ease-out 1.2s both;
+}
+
+@keyframes subtitleFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 0.95;
+    transform: translateY(0);
+  }
 }
 
 .hero-buttons {
@@ -99,6 +174,18 @@
   justify-content: center;
   margin-bottom: 4rem;
   flex-wrap: wrap;
+  animation: buttonsSlideUp 0.8s ease-out 1.4s both;
+}
+
+@keyframes buttonsSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .btn-primary {
@@ -131,6 +218,16 @@
   font-size: 1.1rem;
   transition: all 0.3s ease;
   border: 2px solid rgba(255,255,255,0.3);
+  animation: buttonPulse 2s ease-in-out infinite;
+}
+
+@keyframes buttonPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255,255,255,0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(255,255,255,0);
+  }
 }
 
 .btn-secondary:hover {
@@ -143,10 +240,42 @@
   justify-content: center;
   gap: 3rem;
   flex-wrap: wrap;
+  animation: statsReveal 0.8s ease-out 1.6s both;
+}
+
+@keyframes statsReveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .stat {
   text-align: center;
+  animation: statBounce 0.6s ease-out both;
+}
+
+.stat:nth-child(1) { animation-delay: 1.8s; }
+.stat:nth-child(2) { animation-delay: 1.9s; }
+.stat:nth-child(3) { animation-delay: 2.0s; }
+
+@keyframes statBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(-10deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 .stat-number {
@@ -214,6 +343,42 @@
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
+  animation: cardSlideIn 0.8s ease-out both;
+}
+
+.feature-card:nth-child(1) { animation-delay: 0.2s; }
+.feature-card:nth-child(2) { animation-delay: 0.4s; }
+.feature-card:nth-child(3) { animation-delay: 0.6s; }
+.feature-card:nth-child(4) { animation-delay: 0.8s; }
+.feature-card:nth-child(5) { animation-delay: 1.0s; }
+.feature-card:nth-child(6) { animation-delay: 1.2s; }
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(60px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Fallback for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .home-container *,
+  .hero-content,
+  .hero-badge,
+  .hero-title,
+  .gradient-text,
+  .hero-subtitle,
+  .hero-buttons,
+  .hero-stats,
+  .stat,
+  .feature-card {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 .feature-card:hover {

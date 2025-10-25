@@ -4,11 +4,20 @@ const nodemailer = require('nodemailer');
 
 // Email transporter setup
 const createEmailTransporter = () => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.log('📧 EMAIL DEMO MODE - Credentials not configured');
+    return null;
+  }
+  
   return nodemailer.createTransporter({
     service: 'gmail',
+    secure: false,
     auth: {
-      user: process.env.EMAIL_USER || 'your-email@gmail.com',
-      pass: process.env.EMAIL_PASS || 'your-app-password'
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    },
+    tls: {
+      rejectUnauthorized: false
     }
   });
 };
@@ -17,6 +26,12 @@ const createEmailTransporter = () => {
 const sendVerificationEmail = async (user, token) => {
   try {
     const transporter = createEmailTransporter();
+    
+    if (!transporter) {
+      console.log('📧 EMAIL DEMO - Would send verification email to:', user.email);
+      return;
+    }
+    
     const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
     
     const mailOptions = {
@@ -51,6 +66,12 @@ const sendVerificationEmail = async (user, token) => {
 const sendPasswordResetEmail = async (user, token) => {
   try {
     const transporter = createEmailTransporter();
+    
+    if (!transporter) {
+      console.log('📧 EMAIL DEMO - Would send reset email to:', user.email);
+      return;
+    }
+    
     const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
     
     const mailOptions = {

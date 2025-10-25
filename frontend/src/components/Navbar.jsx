@@ -31,6 +31,9 @@ function Navbar() {
           <Link to="/packages" className={`btn nav-oval${location.pathname === '/packages' ? ' active-oval' : ''}`}>Packages</Link>
         </li>
         <li>
+          <Link to="/map" className={`btn nav-oval${location.pathname === '/map' ? ' active-oval' : ''}`}>Map</Link>
+        </li>
+        <li>
           <Link to="/testimonial" className={`btn nav-oval${location.pathname === '/testimonial' ? ' active-oval' : ''}`}>Testimonials</Link>
         </li>
         {isAuthenticated && (
@@ -44,10 +47,14 @@ function Navbar() {
           </li>
         )}
         {isAuthenticated ? (
-          <li className="auth-section">
-            <span className="user-welcome">Hi, {user?.name}!</span>
-            <button className={`btn nav-oval logout-btn`} onClick={handleLogout}>Logout</button>
-          </li>
+          <>
+            <li>
+              <span className="user-welcome">Hi!</span>
+            </li>
+            <li>
+              <button className={`btn nav-oval logout-btn`} onClick={handleLogout}>Logout</button>
+            </li>
+          </>
         ) : (
           <li>
             <Link to="/auth" className={`btn nav-oval${location.pathname === '/auth' ? ' active-oval' : ''}`}>Login / Signup</Link>

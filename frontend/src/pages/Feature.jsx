@@ -1,3 +1,5 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
 import './Feature.css';
 
 function Feature() {
@@ -30,12 +32,25 @@ function Feature() {
 
       <div className="feature-grid">
         {features.map((item, i) => (
-          <div key={i} className={`feature-card ${i % 2 === 0 ? 'left' : 'right'}`}>
-            <div className="feature-icon">
-              <i className={item.icon}></i>
-            </div>
-            <h3>{item.title}</h3>
-            <p>{item.desc}</p>
+          <div key={i} className={`feature-card ${i % 2 === 0 ? 'left' : 'right'} ${item.link ? 'clickable' : ''}`}>
+            {item.link ? (
+              <Link to={item.link} className="feature-link">
+                <div className="feature-icon">
+                  <i className={item.icon}></i>
+                </div>
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+                <div className="explore-btn">🗺️ Explore Map</div>
+              </Link>
+            ) : (
+              <>
+                <div className="feature-icon">
+                  <i className={item.icon}></i>
+                </div>
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+              </>
+            )}
           </div>
         ))}
       </div>

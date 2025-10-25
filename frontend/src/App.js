@@ -15,6 +15,7 @@ import Packages from './components/Packages';
 import PackageDetail from './components/PackageDetail';
 import Bookings from './components/Bookings';
 import AdminPanel from './components/AdminPanel';
+import Map from './components/Map';
 
 // Set axios base URL
 axios.defaults.baseURL = 'http://localhost:5001';
@@ -37,6 +38,7 @@ function App() {
           <Route path="/testimonial" element={<Testimonial />} />
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/map" element={<Map />} />
           <Route path="/auth" element={<Auth />} />
         </Routes>
         {!isAuthPage && <Footer />}

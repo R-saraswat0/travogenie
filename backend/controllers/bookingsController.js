@@ -1,95 +1,60 @@
-const Booking = require('../models/Booking');
+const SimpleBooking = require('../models/SimpleBooking');
 const Package = require('../models/Package');
 const User = require('../models/User');
 
 // Create new booking
 const bookPackage = async (req, res) => {
   try {
-    const {
-      packageId,
-      travelers,
-      startDate,
-      pricing
-    } = req.body;
-
-    // Validate package exists and is active
-    const package = await Package.findById(packageId);
-    if (!package || !package.isActive) {
-      return res.status(404).json({
-        success: false,
-        message: 'Package not found or not available'
-      });
-    }
-
-    // Calculate end date based on package duration
-    const startDateObj = new Date(startDate);
-    const endDateObj = new Date(startDateObj.getTime() + (package.duration?.nights || 1) * 24 * 60 * 60 * 1000);
-
-    // Use provided pricing or calculate default
-    let bookingPricing;
-    if (pricing && pricing.totalAmount) {
-      bookingPricing = {
-        baseAmount: pricing.totalAmount,
-        taxes: Math.round(pricing.totalAmount * 0.12),
-        totalAmount: pricing.totalAmount
-      };
-    } else {
-      const baseAmount = package.pricing?.adult || 35000;
-      const taxes = Math.round(baseAmount * 0.12);
-      bookingPricing = {
-        baseAmount,
-        taxes,
-        totalAmount: baseAmount + taxes
-      };
-    }
-
-    // Create booking with simplified data
-    const booking = new Booking({
-      user: req.user.id,
-      package: packageId,
-      travelers: {
-        adults: pricing?.breakdown?.adults || 1,
-        children: pricing?.breakdown?.children || 0,
-        infants: pricing?.breakdown?.infants || 0
+    console.log('Booking request:', req.body);
+    console.log('User:', req.user);
+    
+    // Direct MongoDB insertion with minimal data
+    const bookingData = {
+      user: req.user._id,
+      package: req.body.packageId,
+      dates: {
+        startDate: new Date(req.body.startDate),
+        endDate: new Date(new Date(req.body.startDate).getTime() + 24 * 60 * 60 * 1000)
       },
+      pricing: {
+        totalAmount: req.body.pricing?.totalAmount || 39999
+      },
+      status: 'Confirmed',
+      createdAt: new Date()
+    };
+    
+    const startDateObj = new Date(req.body.startDate);
+    const endDateObj = new Date(startDateObj.getTime() + 24 * 60 * 60 * 1000);
+    
+    const booking = await SimpleBooking.create({
+      user: req.user._id,
+      package: req.body.packageId,
       dates: {
         startDate: startDateObj,
         endDate: endDateObj
       },
-      pricing: bookingPricing,
-      contactInfo: {
-        phone: req.user.phone || 'Not provided',
-        address: 'Not provided'
+      travelers: {
+        adults: req.body.travelers?.adults || 1,
+        children: req.body.travelers?.children || 0,
+        infants: req.body.travelers?.infants || 0
       },
-      status: 'Pending'
+      pricing: {
+        totalAmount: req.body.pricing?.totalAmount || 39999
+      },
+      status: 'Confirmed'
     });
-
-    await booking.save();
-
-    // Populate booking details
-    await booking.populate('package', 'title destination duration');
-    await booking.populate('user', 'name email');
-
+    console.log('Booking created:', booking._id);
+    
     res.status(201).json({
       success: true,
       message: 'Booking created successfully',
       booking
     });
   } catch (error) {
-    console.error('Create booking error:', error);
-    
-    if (error.name === 'ValidationError') {
-      const errors = Object.values(error.errors).map(err => err.message);
-      return res.status(400).json({
-        success: false,
-        message: 'Validation error',
-        errors
-      });
-    }
-
+    console.error('Booking error:', error);
     res.status(500).json({
       success: false,
-      message: 'Server error while creating booking'
+      message: error.message
     });
   }
 };
@@ -97,36 +62,23 @@ const bookPackage = async (req, res) => {
 // Get user's bookings
 const getUserBookings = async (req, res) => {
   try {
-    const { page = 1, limit = 10, status } = req.query;
+    console.log('Getting bookings for user:', req.user._id);
     
-    let query = { user: req.user.id };
-    
-    if (status) {
-      query.status = status;
-    }
-
-    const bookings = await Booking.find(query)
+    const bookings = await SimpleBooking.find({ user: req.user._id })
       .populate('package', 'title destination duration images pricing')
-      .sort({ createdAt: -1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-
-    const total = await Booking.countDocuments(query);
+      .sort({ createdAt: -1 });
+    
+    console.log('Found bookings:', bookings.length);
 
     res.json({
       success: true,
-      bookings,
-      pagination: {
-        current: parseInt(page),
-        pages: Math.ceil(total / limit),
-        total
-      }
+      bookings
     });
   } catch (error) {
     console.error('Get user bookings error:', error);
     res.status(500).json({
       success: false,
-      message: 'Server error while fetching bookings'
+      message: error.message
     });
   }
 };
@@ -134,7 +86,7 @@ const getUserBookings = async (req, res) => {
 // Get booking by ID
 const getBookingById = async (req, res) => {
   try {
-    const booking = await Booking.findById(req.params.id)
+    const booking = await SimpleBooking.findById(req.params.id)
       .populate('package')
       .populate('user', 'name email');
 
@@ -146,7 +98,7 @@ const getBookingById = async (req, res) => {
     }
 
     // Check if user owns this booking or is admin
-    if (booking.user._id.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (booking.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -201,9 +153,7 @@ const updateBookingStatus = async (req, res) => {
 // Cancel booking
 const cancelBooking = async (req, res) => {
   try {
-    const { reason } = req.body;
-    
-    const booking = await Booking.findById(req.params.id);
+    const booking = await SimpleBooking.findById(req.params.id);
 
     if (!booking) {
       return res.status(404).json({
@@ -213,41 +163,20 @@ const cancelBooking = async (req, res) => {
     }
 
     // Check if user owns this booking
-    if (booking.user.toString() !== req.user.id) {
+    if (booking.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
       });
     }
 
-    // Check if booking can be cancelled
-    if (!booking.canBeCancelled()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Booking cannot be cancelled'
-      });
-    }
-
-    // Calculate refund amount
-    const refundAmount = booking.calculateRefund();
-
-    // Update booking
+    // Update booking status to cancelled
     booking.status = 'Cancelled';
-    booking.cancellation = {
-      isCancelled: true,
-      cancelledAt: new Date(),
-      cancelledBy: req.user.id,
-      reason,
-      refundAmount,
-      refundStatus: refundAmount > 0 ? 'Pending' : 'Not Applicable'
-    };
-
     await booking.save();
 
     res.json({
       success: true,
-      message: 'Booking cancelled successfully',
-      refundAmount
+      message: 'Booking cancelled successfully'
     });
   } catch (error) {
     console.error('Cancel booking error:', error);
@@ -258,48 +187,7 @@ const cancelBooking = async (req, res) => {
   }
 };
 
-// Update payment status
-const updatePaymentStatus = async (req, res) => {
-  try {
-    const { paymentStatus, transactionId, paidAmount } = req.body;
-    
-    const booking = await Booking.findById(req.params.id);
 
-    if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: 'Booking not found'
-      });
-    }
-
-    // Update payment details
-    booking.payment.status = paymentStatus;
-    booking.payment.transactionId = transactionId;
-    booking.payment.paidAmount = paidAmount;
-    booking.payment.paymentDate = new Date();
-
-    // Update booking status based on payment
-    if (paymentStatus === 'Paid') {
-      booking.status = 'Confirmed';
-    } else if (paymentStatus === 'Failed') {
-      booking.status = 'Pending';
-    }
-
-    await booking.save();
-
-    res.json({
-      success: true,
-      message: 'Payment status updated successfully',
-      booking
-    });
-  } catch (error) {
-    console.error('Update payment status error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while updating payment status'
-    });
-  }
-};
 
 // Get all bookings (Admin only)
 const getAllBookings = async (req, res) => {
@@ -414,7 +302,7 @@ module.exports = {
   getBookingById,
   updateBookingStatus,
   cancelBooking,
-  updatePaymentStatus,
+
   getAllBookings,
   getBookingStats
 };

@@ -72,10 +72,13 @@ const PackageDetail = () => {
     }
 
     try {
-      // Step 1: Create booking
       const bookingData = {
         packageId: id,
-        travelers: guests.adults + guests.children + guests.infants,
+        travelers: {
+          adults: guests.adults,
+          children: guests.children,
+          infants: guests.infants
+        },
         startDate: selectedDate,
         pricing: {
           totalAmount: totalPrice,
@@ -88,7 +91,7 @@ const PackageDetail = () => {
         }
       };
       
-      const bookingResponse = await fetch('http://localhost:5001/api/bookings', {
+      const response = await fetch('http://localhost:5001/api/bookings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,121 +100,14 @@ const PackageDetail = () => {
         body: JSON.stringify(bookingData)
       });
 
-      const bookingResult = await bookingResponse.json();
+      const result = await response.json();
       
-      if (!bookingResult.success) {
-        alert(bookingResult.message || 'Booking failed');
-        return;
-      }
-
-      const bookingId = bookingResult.booking._id;
-
-      // Step 2: Create payment order
-      const paymentResponse = await fetch('http://localhost:5001/api/payment/create-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          bookingId: bookingId,
-          amount: totalPrice
-        })
-      });
-
-      const paymentResult = await paymentResponse.json();
-      console.log('Payment response:', paymentResult);
-      
-      if (!paymentResult.success) {
-        alert(`Payment initialization failed: ${paymentResult.message || 'Unknown error'}`);
-        return;
-      }
-
-      // Step 3: Initialize Payment (Demo or Razorpay)
-      if (paymentResult.key === 'rzp_test_demo') {
-        // Demo mode - simulate payment success
-        const confirmPayment = window.confirm(`Demo Payment: ₹${totalPrice.toLocaleString('en-IN')}\n\nClick OK to simulate successful payment`);
-        
-        if (confirmPayment) {
-          try {
-            const verifyResponse = await fetch('http://localhost:5001/api/payment/verify', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-              },
-              body: JSON.stringify({
-                razorpay_order_id: paymentResult.orderId,
-                razorpay_payment_id: 'demo_payment_123',
-                razorpay_signature: 'demo_signature',
-                bookingId: bookingId
-              })
-            });
-
-            const verifyResult = await verifyResponse.json();
-            
-            if (verifyResult.success) {
-              alert('Payment successful! Your booking is confirmed.');
-              navigate('/bookings');
-            } else {
-              alert('Payment verification failed');
-            }
-          } catch (error) {
-            console.error('Payment verification error:', error);
-            alert('Payment verification failed');
-          }
-        }
+      if (result.success) {
+        alert('Booking confirmed successfully!');
+        navigate('/bookings');
       } else {
-        // Real Razorpay mode
-        const options = {
-          key: paymentResult.key,
-          amount: paymentResult.amount,
-          currency: paymentResult.currency,
-          name: 'TravOgenie',
-          description: `Booking for ${packageData.title}`,
-          order_id: paymentResult.orderId,
-          handler: async function (response) {
-            try {
-              const verifyResponse = await fetch('http://localhost:5001/api/payment/verify', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  bookingId: bookingId
-                })
-              });
-
-              const verifyResult = await verifyResponse.json();
-              
-              if (verifyResult.success) {
-                alert('Payment successful! Your booking is confirmed.');
-                navigate('/bookings');
-              } else {
-                alert('Payment verification failed');
-              }
-            } catch (error) {
-              console.error('Payment verification error:', error);
-              alert('Payment verification failed');
-            }
-          },
-          prefill: {
-            name: user.name,
-            email: user.email
-          },
-          theme: {
-            color: '#1E90FF'
-          }
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.open();
+        alert(result.message || 'Booking failed');
       }
-      
     } catch (error) {
       console.error('Booking error:', error);
       alert('Booking failed. Please try again.');
@@ -318,18 +214,18 @@ const PackageDetail = () => {
             <div className="price-breakdown">
               <div className="price-item">
                 <span>Adults ({guests.adults}) × {nights} nights</span>
-                <span>${Math.round((packageData.pricing?.adult || 0) * guests.adults * (nights / (packageData.duration?.nights || 1)))}</span>
+                <span>₹{Math.round((packageData.pricing?.adult || 0) * guests.adults * (nights / (packageData.duration?.nights || 1)))}</span>
               </div>
               {guests.children > 0 && (
                 <div className="price-item">
                   <span>Children ({guests.children}) × {nights} nights</span>
-                  <span>${Math.round((packageData.pricing?.child || 0) * guests.children * (nights / (packageData.duration?.nights || 1)))}</span>
+                  <span>₹{Math.round((packageData.pricing?.child || 0) * guests.children * (nights / (packageData.duration?.nights || 1)))}</span>
                 </div>
               )}
               {guests.infants > 0 && (
                 <div className="price-item">
                   <span>Infants ({guests.infants}) × {nights} nights</span>
-                  <span>${Math.round((packageData.pricing?.infant || 0) * guests.infants * (nights / (packageData.duration?.nights || 1)))}</span>
+                  <span>₹{Math.round((packageData.pricing?.infant || 0) * guests.infants * (nights / (packageData.duration?.nights || 1)))}</span>
                 </div>
               )}
               {nights !== (packageData.duration?.nights || 1) && (
@@ -346,7 +242,7 @@ const PackageDetail = () => {
           </div>
 
           <button className="book-now-btn" onClick={handleBooking}>
-            Pay Now - ₹{totalPrice.toLocaleString('en-IN')}
+            Book Now - ₹{totalPrice.toLocaleString('en-IN')}
           </button>
         </div>
 

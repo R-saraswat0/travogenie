@@ -1,6 +1,7 @@
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Booking = require('../models/Booking');
+const { sendBookingConfirmation } = require('../utils/emailService');
 
 // Initialize Razorpay only if not in demo mode
 let razorpay;
@@ -57,12 +58,27 @@ const verifyPayment = async (req, res) => {
     
     // Demo mode - always verify successfully
     if (process.env.PAYMENT_MODE === 'demo') {
-      await Booking.findByIdAndUpdate(bookingId, {
+      const booking = await Booking.findByIdAndUpdate(bookingId, {
         'payment.status': 'Paid',
         'payment.transactionId': razorpay_payment_id || 'demo_payment_123',
         'payment.paymentDate': new Date(),
         status: 'Confirmed'
-      });
+      }, { new: true }).populate('package', 'title destination').populate('user', 'name email');
+      
+      // Send confirmation email
+      if (booking) {
+        const emailData = {
+          packageTitle: booking.package.title,
+          destination: booking.package.destination,
+          bookingId: booking.bookingId || booking._id.toString().slice(-8).toUpperCase(),
+          startDate: new Date(booking.dates.startDate).toLocaleDateString('en-IN'),
+          travelers: (booking.travelers.adults || 0) + (booking.travelers.children || 0) + (booking.travelers.infants || 0),
+          totalAmount: booking.pricing.totalAmount
+        };
+        
+        await sendBookingConfirmation(booking.user.email, booking.user.name, emailData);
+      }
+      
       res.json({ success: true, message: 'Payment verified successfully (Demo Mode)' });
       return;
     }
@@ -74,12 +90,26 @@ const verifyPayment = async (req, res) => {
 
     if (razorpay_signature === expectedSign) {
       // Update booking status
-      await Booking.findByIdAndUpdate(bookingId, {
+      const booking = await Booking.findByIdAndUpdate(bookingId, {
         'payment.status': 'Paid',
         'payment.transactionId': razorpay_payment_id,
         'payment.paymentDate': new Date(),
         status: 'Confirmed'
-      });
+      }, { new: true }).populate('package', 'title destination').populate('user', 'name email');
+      
+      // Send confirmation email
+      if (booking) {
+        const emailData = {
+          packageTitle: booking.package.title,
+          destination: booking.package.destination,
+          bookingId: booking.bookingId || booking._id.toString().slice(-8).toUpperCase(),
+          startDate: new Date(booking.dates.startDate).toLocaleDateString('en-IN'),
+          travelers: (booking.travelers.adults || 0) + (booking.travelers.children || 0) + (booking.travelers.infants || 0),
+          totalAmount: booking.pricing.totalAmount
+        };
+        
+        await sendBookingConfirmation(booking.user.email, booking.user.name, emailData);
+      }
 
       res.json({ success: true, message: 'Payment verified successfully' });
     } else {
