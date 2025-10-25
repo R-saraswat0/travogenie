@@ -91,6 +91,7 @@
   color: #333;
   backdrop-filter: blur(10px);
   animation: slideInFromBottom 0.8s ease-out 0.5s both;
+  box-sizing: border-box;
 }
 
 @keyframes slideInFromBottom {
@@ -104,16 +105,141 @@
   }
 }
 
-@media (max-width: 480px) {
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .auth-container {
+    padding: 15px;
+    min-height: 100vh;
+  }
+  
+  .auth-container .form-container {
+    max-width: 100%;
+    width: 100%;
+    padding: 30px 25px;
+    margin: 0;
+  }
+  
+  .auth-container .toggle {
+    flex-direction: row;
+    gap: 0.3rem;
+  }
+  
+  .auth-container .toggle div {
+    padding: 10px 25px;
+    font-size: 0.9rem;
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
   .auth-container {
     padding: 10px;
   }
+  
   .auth-container .form-container {
-    padding: 30px 20px;
+    padding: 25px 20px;
+    border-radius: 15px;
   }
+  
   .auth-container .toggle div {
-    padding: 10px 20px;
-    font-size: 0.9rem;
+    padding: 8px 20px;
+    font-size: 0.85rem;
+  }
+  
+  .form-group input {
+    padding: 12px 40px 12px 12px;
+    font-size: 14px;
+  }
+  
+  .btn {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 8px;
+  }
+  
+  .auth-container .form-container {
+    padding: 20px 15px;
+    border-radius: 12px;
+  }
+  
+  .auth-container .toggle {
+    margin-bottom: 15px;
+  }
+  
+  .auth-container .toggle div {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .form-group input {
+    padding: 10px 35px 10px 10px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+  
+  .form-group i {
+    right: 12px;
+    top: 38px;
+    font-size: 14px;
+  }
+  
+  .btn {
+    padding: 12px;
+    font-size: 14px;
+    margin-top: 15px;
+  }
+  
+  .social-login {
+    margin-top: 20px;
+  }
+  
+  .social-icons {
+    gap: 10px;
+  }
+  
+  .social-icon {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@media (max-width: 360px) {
+  .auth-container {
+    padding: 5px;
+  }
+  
+  .auth-container .form-container {
+    padding: 15px 10px;
+  }
+  
+  .auth-container .toggle div {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .form-group input {
+    padding: 8px 30px 8px 8px;
+    font-size: 13px;
+  }
+  
+  .btn {
+    padding: 10px;
+    font-size: 13px;
   }
 }
 
