@@ -29,6 +29,9 @@ const customIcon = new L.Icon({
 const Map = () => {
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [mapRef, setMapRef] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Travel destinations with coordinates
   const destinations = [
@@ -109,10 +112,84 @@ const Map = () => {
 
   const resetView = () => {
     setSelectedDestination(null);
+    setSearchQuery('');
+    setSearchResults([]);
     if (mapRef) {
       mapRef.setView([20, 0], 2);
     }
   };
+
+  // Search for places using Nominatim API
+  const searchPlace = async (query) => {
+    if (!query || !query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`
+      );
+      if (!response.ok) {
+        throw new Error('Search failed');
+      }
+      const data = await response.json();
+      setSearchResults(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    // Debounce search
+    clearTimeout(window.searchTimeout);
+    window.searchTimeout = setTimeout(() => {
+      searchPlace(query);
+    }, 500);
+  };
+
+  // Handle search result selection
+  const handleSearchSelect = (result) => {
+    if (!result || !result.lat || !result.lon) {
+      return;
+    }
+    
+    const lat = parseFloat(result.lat);
+    const lon = parseFloat(result.lon);
+    
+    if (isNaN(lat) || isNaN(lon)) {
+      return;
+    }
+    
+    if (mapRef) {
+      mapRef.setView([lat, lon], 10);
+    }
+    
+    setSearchQuery(result.display_name || 'Unknown location');
+    setSearchResults([]);
+    setSelectedDestination({
+      id: 'search-result',
+      name: result.display_name || 'Search Result',
+      coordinates: [lat, lon],
+      description: 'Search result location',
+      price: 'Custom',
+      duration: 'Flexible',
+      rating: 'N/A'
+    });
+  };
+
+  // Filter destinations based on search
+  const filteredDestinations = destinations?.filter(dest =>
+    dest.name.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   return (
     <div className="map-page">
@@ -121,6 +198,43 @@ const Map = () => {
         <div className="header-content">
           <h1>🗺️ Interactive World Map</h1>
           <p>Discover amazing destinations around the globe</p>
+          
+          {/* Search Section */}
+          <div className="search-section">
+            <div className="search-container">
+              <div className="search-input-wrapper">
+                <input
+                  type="text"
+                  placeholder="Search for any place in the world..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="search-input"
+                />
+                <div className="search-icon">🔍</div>
+                {isSearching && <div className="search-loading">⏳</div>}
+              </div>
+              
+              {/* Search Results Dropdown */}
+              {searchResults && searchResults.length > 0 && (
+                <div className="search-results">
+                  {searchResults.map((result, index) => (
+                    <div
+                      key={index}
+                      className="search-result-item"
+                      onClick={() => handleSearchSelect(result)}
+                    >
+                      <div className="result-icon">📍</div>
+                      <div className="result-text">
+                        <div className="result-name">{result.display_name}</div>
+                        <div className="result-type">{result.type || 'Location'}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          
           <button className="reset-btn" onClick={resetView}>
             🌍 Reset View
           </button>
@@ -142,7 +256,7 @@ const Map = () => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
-              {destinations.map((destination) => (
+              {filteredDestinations.map((destination) => (
                 <Marker
                   key={destination.id}
                   position={destination.coordinates}
@@ -164,6 +278,21 @@ const Map = () => {
                   </Popup>
                 </Marker>
               ))}
+              
+              {/* Search Result Marker */}
+              {selectedDestination && selectedDestination.id === 'search-result' && (
+                <Marker
+                  position={selectedDestination.coordinates}
+                  icon={customIcon}
+                >
+                  <Popup>
+                    <div className="popup-content">
+                      <h3>📍 Search Result</h3>
+                      <p>{selectedDestination.name}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              )}
             </MapContainer>
           </div>
         </div>
@@ -171,21 +300,25 @@ const Map = () => {
         <div className="sidebar">
           {selectedDestination ? (
             <div className="destination-details">
-              <div className="destination-image">
-                <img src={selectedDestination.image} alt={selectedDestination.name} />
-              </div>
+              {selectedDestination.image && (
+                <div className="destination-image">
+                  <img src={selectedDestination.image} alt={selectedDestination.name} />
+                </div>
+              )}
               <div className="destination-info">
                 <h2>{selectedDestination.name}</h2>
                 <p className="description">{selectedDestination.description}</p>
                 
-                <div className="highlights-section">
-                  <h3>🌟 Highlights</h3>
-                  <ul className="highlights-list">
-                    {selectedDestination.highlights.map((highlight, index) => (
-                      <li key={index}>{highlight}</li>
-                    ))}
-                  </ul>
-                </div>
+                {selectedDestination.highlights && (
+                  <div className="highlights-section">
+                    <h3>🌟 Highlights</h3>
+                    <ul className="highlights-list">
+                      {selectedDestination.highlights.map((highlight, index) => (
+                        <li key={index}>{highlight}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 <div className="pricing-section">
                   <div className="price-item">
@@ -238,7 +371,7 @@ const Map = () => {
               <div className="popular-section">
                 <h3>🔥 Popular Destinations</h3>
                 <div className="popular-list">
-                  {destinations.slice(0, 3).map((destination) => (
+                  {destinations?.slice(0, 3).map((destination) => (
                     <div 
                       key={destination.id}
                       className="popular-item"

@@ -1,7 +1,8 @@
 
 import React, { useState, useMemo } from 'react';
-import { FaStar } from 'react-icons/fa';
+import { FaStar, FaPlus } from 'react-icons/fa';
 import TestimonialCard from '../components/TestimonialCard';
+import AddTestimonialModal from '../components/AddTestimonialModal';
 import '../components/TestimonialCard.css';
 
 const testimonialData = [
@@ -34,7 +35,12 @@ const testimonialData = [
 function Testimonial() {
   const [filter, setFilter] = useState('all');
   const [page, setPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const cardsPerPage = 6;
+
+  const handleTestimonialSuccess = () => {
+    alert('Thank you! Your testimonial has been submitted and will be reviewed before being published.');
+  };
 
   const filteredData = useMemo(() => {
 	return testimonialData.filter((item) => {
@@ -88,6 +94,28 @@ function Testimonial() {
 		>
 		  Hear what our global community says about their journeys
 		</p>
+		<button
+		  onClick={() => setIsModalOpen(true)}
+		  style={{
+			padding: '10px 20px',
+			background: 'linear-gradient(135deg, #1E90FF, #2ECC71)',
+			color: 'white',
+			border: 'none',
+			borderRadius: '25px',
+			fontSize: '1rem',
+			fontWeight: '500',
+			cursor: 'pointer',
+			display: 'flex',
+			alignItems: 'center',
+			gap: '8px',
+			margin: '0 auto',
+			transition: 'transform 0.2s',
+		  }}
+		  onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+		  onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+		>
+		  <FaPlus /> Add Your Experience
+		</button>
 	  </div>
 
   <div
@@ -162,6 +190,12 @@ function Testimonial() {
 	  />
 	))}
   </div>
+
+	  <AddTestimonialModal
+		isOpen={isModalOpen}
+		onClose={() => setIsModalOpen(false)}
+		onSuccess={handleTestimonialSuccess}
+	  />
 	</section>
   );
 }

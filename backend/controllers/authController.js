@@ -9,7 +9,8 @@ const createEmailTransporter = () => {
     return null;
   }
   
-  return nodemailer.createTransporter({
+  return nodemailer.createTransport({
+
     service: 'gmail',
     secure: false,
     auth: {

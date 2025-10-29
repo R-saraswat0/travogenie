@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import axios from 'axios';
 
+// Configure axios base URL
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001';
+
 const AuthContext = createContext();
 
 // Auth reducer
@@ -35,6 +38,11 @@ const authReducer = (state, action) => {
         loading: false,
         error: null 
       };
+    case 'LOADING_COMPLETE':
+      return { 
+        ...state, 
+        loading: false 
+      };
     case 'UPDATE_USER':
       return { 
         ...state, 
@@ -50,9 +58,9 @@ const authReducer = (state, action) => {
 // Initial state
 const initialState = {
   isAuthenticated: false,
-  user: null,
+  user: typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || 'null') : null,
   token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
-  loading: false,
+  loading: true,
   error: null
 };
 
@@ -79,26 +87,45 @@ export const AuthProvider = ({ children }) => {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       } else {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         delete axios.defaults.headers.common['Authorization'];
       }
+    }
+  };
+
+  // Set user data
+  const setUserData = (user) => {
+    if (typeof window !== 'undefined' && user) {
+      localStorage.setItem('user', JSON.stringify(user));
     }
   };
 
   // Verify token
   const verifyToken = async () => {
     try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      if (!token) {
+        dispatch({ type: 'LOADING_COMPLETE' });
+        return;
+      }
+      
       const response = await axios.get('/api/auth/me');
       if (response.data.success) {
+        setUserData(response.data.user);
         dispatch({
           type: 'LOGIN_SUCCESS',
           payload: {
             user: response.data.user,
-            token: typeof window !== 'undefined' ? localStorage.getItem('token') : null
+            token: token
           }
         });
+      } else {
+        dispatch({ type: 'LOADING_COMPLETE' });
       }
     } catch (error) {
-      logout();
+      console.error('Token verification failed:', error);
+      setAuthToken(null);
+      dispatch({ type: 'LOGOUT' });
     }
   };
 
@@ -112,6 +139,7 @@ export const AuthProvider = ({ children }) => {
       if (response.data.success) {
         const { token, user } = response.data;
         setAuthToken(token);
+        setUserData(user);
         
         dispatch({
           type: 'LOGIN_SUCCESS',
@@ -140,6 +168,7 @@ export const AuthProvider = ({ children }) => {
       if (response.data.success) {
         const { token, user } = response.data;
         setAuthToken(token);
+        setUserData(user);
         
         dispatch({
           type: 'LOGIN_SUCCESS',

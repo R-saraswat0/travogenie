@@ -13,6 +13,10 @@ function Navbar() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Debug logging
+  console.log('Navbar - isAuthenticated:', isAuthenticated);
+  console.log('Navbar - user:', user);
+
   const handleLogout = async () => {
     await logout();
     navigate('/');
@@ -69,7 +73,7 @@ function Navbar() {
         {isAuthenticated ? (
           <>
             <li>
-              <span className="user-welcome">Hi!</span>
+              <span className="user-welcome">Hi, {user?.name || 'User'}!</span>
             </li>
             <li>
               <button className={`btn nav-oval logout-btn`} onClick={handleLogout}>Logout</button>
