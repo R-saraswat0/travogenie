@@ -56,13 +56,28 @@ const authReducer = (state, action) => {
 };
 
 // Initial state
-const initialState = {
-  isAuthenticated: false,
-  user: typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || 'null') : null,
-  token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
-  loading: true,
-  error: null
+const getInitialState = () => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    return {
+      isAuthenticated: !!token,
+      user: user ? JSON.parse(user) : null,
+      token: token,
+      loading: true,
+      error: null
+    };
+  }
+  return {
+    isAuthenticated: false,
+    user: null,
+    token: null,
+    loading: true,
+    error: null
+  };
 };
+
+const initialState = getInitialState();
 
 // Auth Provider
 export const AuthProvider = ({ children }) => {
@@ -75,7 +90,11 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         verifyToken();
+      } else {
+        dispatch({ type: 'LOADING_COMPLETE' });
       }
+    } else {
+      dispatch({ type: 'LOADING_COMPLETE' });
     }
   }, []);
 
@@ -161,9 +180,11 @@ export const AuthProvider = ({ children }) => {
   // Login
   const login = async (credentials) => {
     try {
+      console.log('Login attempt with:', credentials);
       dispatch({ type: 'LOGIN_START' });
       
       const response = await axios.post('/api/auth/login', credentials);
+      console.log('Login response:', response.data);
       
       if (response.data.success) {
         const { token, user } = response.data;
@@ -178,6 +199,7 @@ export const AuthProvider = ({ children }) => {
         return { success: true, message: response.data.message };
       }
     } catch (error) {
+      console.error('Login error:', error);
       const errorMessage = error.response?.data?.message || 'Login failed';
       dispatch({
         type: 'LOGIN_FAILURE',
