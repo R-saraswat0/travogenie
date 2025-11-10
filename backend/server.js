@@ -15,6 +15,7 @@ const packageRoutes = require('./routes/packages');
 const bookingRoutes = require('./routes/bookings');
 const paymentRoutes = require('./routes/payment');
 const adminRoutes = require('./routes/admin');
+const testimonialRoutes = require('./routes/testimonials');
 
 const { errorHandler } = require('./middleware/errorMiddleware');
 
@@ -37,6 +38,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
+app.use('/uploads', express.static('uploads'));
 
 // Basic CSRF protection via headers (alternative to csurf package)
 app.use((req, res, next) => {
@@ -83,6 +85,8 @@ app.use('/api/packages', packageRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/testimonials', testimonialRoutes);
+app.use('/api/testimonials', testimonialRoutes);
 
 // Error handler middleware
 app.use(errorHandler);

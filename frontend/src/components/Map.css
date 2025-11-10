@@ -54,6 +54,120 @@
   box-shadow: 0 8px 25px rgba(30,144,255,0.4);
 }
 
+/* Search Section */
+.search-section {
+  margin: 2rem 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 3rem 1rem 1rem;
+  border: 2px solid rgba(30,144,255,0.2);
+  border-radius: 25px;
+  font-size: 1rem;
+  background: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #1E90FF;
+  box-shadow: 0 4px 20px rgba(30,144,255,0.3);
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-icon {
+  position: absolute;
+  right: 1rem;
+  font-size: 1.2rem;
+  color: #1E90FF;
+  pointer-events: none;
+}
+
+.search-loading {
+  position: absolute;
+  right: 3rem;
+  font-size: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid rgba(30,144,255,0.2);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.search-result-item:hover {
+  background: rgba(30,144,255,0.05);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.result-icon {
+  font-size: 1.2rem;
+  margin-right: 1rem;
+  color: #1E90FF;
+}
+
+.result-text {
+  flex: 1;
+}
+
+.result-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.result-type {
+  font-size: 0.8rem;
+  color: #666;
+  text-transform: capitalize;
+}
+
 /* Main Content */
 .map-main {
   max-width: 1400px;
@@ -653,6 +767,27 @@
   
   .header-content h1 {
     font-size: 2rem;
+  }
+  
+  .search-section {
+    margin: 1.5rem 0;
+  }
+  
+  .search-input {
+    padding: 0.875rem 2.5rem 0.875rem 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .search-results {
+    max-height: 250px;
+  }
+  
+  .search-result-item {
+    padding: 0.875rem;
+  }
+  
+  .result-name {
+    font-size: 0.9rem;
   }
   
   .map-main {
