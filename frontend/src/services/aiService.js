@@ -57,10 +57,10 @@ class EnhancedAI {
 
   async callOpenAI(userInput) {
     try {
-      // Replace 'YOUR_OPENAI_API_KEY' with actual key
-      const API_KEY = 'YOUR_OPENAI_API_KEY';
+      // Use environment variable for API key
+      const API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
       
-      if (!API_KEY || API_KEY === 'YOUR_OPENAI_API_KEY') {
+      if (!API_KEY) {
         return null; // Skip if no API key
       }
 
@@ -109,10 +109,10 @@ class EnhancedAI {
 
   async callGemini(userInput) {
     try {
-      // Replace 'YOUR_GEMINI_API_KEY' with actual key
-      const API_KEY = 'YOUR_GEMINI_API_KEY';
+      // Use environment variable for API key
+      const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
       
-      if (!API_KEY || API_KEY === 'YOUR_GEMINI_API_KEY') {
+      if (!API_KEY) {
         return null; // Skip if no API key
       }
 

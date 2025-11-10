@@ -1,5 +1,5 @@
 {
-  "name": "travo-fullstack",
+  "name": "@travogenie/fullstack-app",
   "version": "1.0.0",
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",

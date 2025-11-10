@@ -12,12 +12,15 @@ const updateProfile = async (req, res) => {
     delete updates.role;
     delete updates.isEmailVerified;
     
-    // Validate phone number if provided
-    if (updates.phone && !/^\+?[\d\s-()]+$/.test(updates.phone)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid phone number format'
-      });
+    // Validate phone number if provided (safer validation)
+    if (updates.phone) {
+      const phoneRegex = /^\+?[\d\s\-()]+$/;
+      if (!phoneRegex.test(updates.phone) || updates.phone.length > 20) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid phone number format'
+        });
+      }
     }
     
     // Update user profile

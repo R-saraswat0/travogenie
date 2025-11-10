@@ -38,6 +38,29 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 
+// Basic CSRF protection via headers (alternative to csurf package)
+app.use((req, res, next) => {
+  // Skip CSRF for GET requests and in development
+  if (req.method === 'GET' || process.env.NODE_ENV !== 'production') {
+    return next();
+  }
+  
+  // Check for custom header or referer
+  const referer = req.get('Referer');
+  const origin = req.get('Origin');
+  const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
+  
+  if (origin && allowedOrigins.includes(origin)) {
+    return next();
+  }
+  
+  if (referer && allowedOrigins.some(allowed => referer.startsWith(allowed))) {
+    return next();
+  }
+  
+  return res.status(403).json({ success: false, message: 'CSRF protection: Invalid origin' });
+});
+
 // ✅ Root route for browser testing
 app.get('/', (req, res) => {
     res.send('API is working 🚀');

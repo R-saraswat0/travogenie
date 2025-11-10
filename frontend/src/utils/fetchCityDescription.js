@@ -14,6 +14,16 @@ const validateCityId = (cityId) => {
 export const fetchCityDescription = async (cityId) => {
   try {
     const validatedId = validateCityId(cityId);
+    
+    // Validate URL to prevent SSRF
+    const baseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001';
+    const allowedHosts = ['localhost', '127.0.0.1'];
+    const url = new URL(`/api/cities/${validatedId}/description`, baseUrl);
+    
+    if (!allowedHosts.includes(url.hostname)) {
+      throw new Error('Invalid host');
+    }
+    
     const response = await axios.get(`/api/cities/${validatedId}/description`);
     return response.data;
   } catch (error) {

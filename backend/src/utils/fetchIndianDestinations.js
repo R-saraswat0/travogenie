@@ -20,9 +20,14 @@ export async function fetchIndianCities(limit = 6) {
     
     validateUrl(url);
     
+    const apiKey = process.env.RAPIDAPI_KEY;
+    if (!apiKey) {
+      throw new Error('RapidAPI key not configured');
+    }
+    
     const response = await fetch(url, {
       headers: {
-        'X-RapidAPI-Key': process.env.RAPIDAPI_KEY || '9467c4c227msh826b80a64914732p1c735fjsnfa44341afb4b',
+        'X-RapidAPI-Key': apiKey,
         'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
       },
       timeout: 5000
@@ -62,7 +67,12 @@ export async function fetchCityImage(cityName) {
       throw new Error('Invalid city name after sanitization');
     }
     
-    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(sanitizedCityName)}&client_id=${process.env.UNSPLASH_ACCESS_KEY || 'Pb_MWkPquYqZqS_4ro_sj-emnnmdcCnw1nq5dn-YByo'}`;
+    const unsplashKey = process.env.UNSPLASH_ACCESS_KEY;
+    if (!unsplashKey) {
+      throw new Error('Unsplash API key not configured');
+    }
+    
+    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(sanitizedCityName)}&client_id=${unsplashKey}`;
     
     validateUrl(url);
     

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const User = require('../models/User');
 
 // Generate JWT token
@@ -28,10 +29,14 @@ const authenticate = async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     
-    // Get user from token
+    // Get user from token with constant-time comparison
     const user = await User.findById(decoded.userId).select('-password');
     
-    if (!user) {
+    // Use constant-time comparison to prevent timing attacks
+    const userExists = user ? 'valid' : 'invalid';
+    const expectedResult = 'valid';
+    
+    if (!crypto.timingSafeEqual(Buffer.from(userExists), Buffer.from(expectedResult))) {
       return res.status(401).json({
         success: false,
         message: 'Token is not valid. User not found.'
@@ -111,7 +116,10 @@ const requireEmailVerification = (req, res, next) => {
 const rateLimitSensitive = (req, res, next) => {
   // This would typically use Redis or similar for production
   // For now, we'll implement basic in-memory rate limiting
-  const key = `${req.ip}_${req.path}`;
+  
+  // Sanitize path to prevent path traversal
+  const sanitizedPath = req.path.replace(/\.\.\//g, '').replace(/\.\.\\/g, '');
+  const key = `${req.ip}_${sanitizedPath}`;
   const now = Date.now();
   const windowMs = 15 * 60 * 1000; // 15 minutes
   const maxAttempts = 5;

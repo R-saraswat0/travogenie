@@ -1,6 +1,6 @@
 // Travel API service for fetching real destination data
-const UNSPLASH_ACCESS_KEY = 'YOUR_UNSPLASH_KEY'; // Replace with actual key
-const AMADEUS_API_KEY = 'YOUR_AMADEUS_KEY'; // Replace with actual key
+const UNSPLASH_ACCESS_KEY = process.env.REACT_APP_UNSPLASH_KEY;
+const AMADEUS_API_KEY = process.env.REACT_APP_AMADEUS_KEY;
 
 // Fallback data for when APIs are unavailable
 const fallbackDestinations = [

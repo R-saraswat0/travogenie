@@ -16,9 +16,9 @@ async function testConnection() {
     // Test User model
     console.log('Testing User model...');
     const testUser = new User({
-      name: 'Test User',
-      email: 'test@example.com',
-      password: 'password123'
+      name: process.env.TEST_USER_NAME || 'Test User',
+      email: process.env.TEST_USER_EMAIL || 'test@example.com',
+      password: process.env.TEST_USER_PASSWORD || 'password123'
     });
     
     console.log('✅ User model works!');

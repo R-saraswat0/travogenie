@@ -30,16 +30,29 @@ const getPackages = async (req, res) => {
       query.category = category;
     }
 
-    // Filter by destination
+    // Filter by destination (sanitized to prevent regex injection)
     if (destination) {
-      query.destination = new RegExp(destination, 'i');
+      const sanitizedDestination = destination.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      query.destination = new RegExp(sanitizedDestination, 'i');
     }
 
-    // Price range filter
+    // Price range filter (with validation)
     if (minPrice || maxPrice) {
       query['pricing.adult'] = {};
-      if (minPrice) query['pricing.adult'].$gte = parseInt(minPrice);
-      if (maxPrice) query['pricing.adult'].$lte = parseInt(maxPrice);
+      if (minPrice) {
+        const min = parseInt(minPrice);
+        if (isNaN(min) || min < 0) {
+          return res.status(400).json({ success: false, message: 'Invalid minPrice' });
+        }
+        query['pricing.adult'].$gte = min;
+      }
+      if (maxPrice) {
+        const max = parseInt(maxPrice);
+        if (isNaN(max) || max < 0) {
+          return res.status(400).json({ success: false, message: 'Invalid maxPrice' });
+        }
+        query['pricing.adult'].$lte = max;
+      }
     }
 
     // Duration filter

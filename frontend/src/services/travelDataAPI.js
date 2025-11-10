@@ -15,10 +15,10 @@ class TravelDataAPI {
         return cached.data;
       }
 
-      // Replace with your OpenWeatherMap API key
-      const API_KEY = 'YOUR_WEATHER_API_KEY';
+      // Use environment variable for API key
+      const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
       
-      if (!API_KEY || API_KEY === 'YOUR_WEATHER_API_KEY') {
+      if (!API_KEY) {
         return this.getFallbackWeather(city);
       }
 
@@ -96,10 +96,10 @@ class TravelDataAPI {
   // Get currency exchange rates
   async getExchangeRate(fromCurrency, toCurrency) {
     try {
-      // Replace with your exchange rate API key
-      const API_KEY = 'YOUR_EXCHANGE_API_KEY';
+      // Use environment variable for API key
+      const API_KEY = process.env.REACT_APP_EXCHANGE_API_KEY;
       
-      if (!API_KEY || API_KEY === 'YOUR_EXCHANGE_API_KEY') {
+      if (!API_KEY) {
         return this.getFallbackExchangeRate(fromCurrency, toCurrency);
       }
 
